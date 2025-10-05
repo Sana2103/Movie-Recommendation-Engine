@@ -1,88 +1,64 @@
 # Movie Recommendation Engine
-# Project Overview
-This project is a simple movie recommendation engine built using Python, leveraging the power of the Cosine Similarity algorithm to recommend movies based on user preferences. It focuses on extracting meaningful features from a movie dataset and calculating the similarity between movies to provide personalized recommendations.
-# Key Features
-●	Extracts important features like keywords, cast, genres, and director to create a comprehensive representation of each movie.
-●	Uses CountVectorizer for feature extraction and Cosine Similarity to calculate similarity scores between movies.
-●	Recommends similar movies based on user input.
-●	Efficient and lightweight, suitable for small to medium-sized datasets.
-# Project Structure
-The project consists of two main components:
-# 1. Cosine Similarity Calculation (cosine_similarity.py)
-This script demonstrates the core concept of cosine similarity, which is the backbone of this recommendation engine.
-from sklearn.feature_extraction.text import CountVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 
-text = ["London Paris London", "Paris Paris London"]
-cv = CountVectorizer()
+### Project Overview
 
-count_matrix = cv.fit_transform(text)
-similarity_scores = cosine_similarity(count_matrix)
-print(similarity_scores)
+This project is a content-based movie recommendation engine built in Python. It suggests movies to users based on their preferences by analyzing key features like genres, cast, director, and keywords.
 
-●	CountVectorizer: Transforms the text into a matrix of token counts.
-●	Cosine Similarity: Computes the similarity scores between text vectors to determine how closely they are related.
-# 2. Movie Recommender System (movie_recommender_completed.py)
-This script implements the complete movie recommendation logic, including data preprocessing, feature extraction, and similarity calculation.
-Steps Involved:
-Step 1: Load Movie Dataset
-Loads the movie dataset using Pandas.
-import pandas as pd
-import numpy as np
+The system uses **TF-IDF Vectorization** and **Cosine Similarity** to measure how similar movies are to one another and provides personalized recommendations based on a movie the user likes.
 
-df = pd.read_csv("movie_dataset.csv", low_memory=False)
+### Key Features
 
-Step 2: Select Key Features
-Selects relevant features like keywords, cast, genres, and director.
-features = ['keywords', 'cast', 'genres', 'director']
-for feature in features:
-    df[feature] = df[feature].fillna('')
+  - **Feature Engineering**: Combines key features (`genres`, `cast`, `director`, `keywords`) to create a unique profile for each movie.
+  - **TF-IDF Vectorization**: Uses `TfidfVectorizer` to convert text features into a meaningful numerical format that emphasizes important words.
+  - **Cosine Similarity**: Calculates a similarity score between all movies to find the most relevant recommendations.
+  - **Interactive**: Prompts the user to enter a movie title and delivers a ranked list of recommendations.
 
-Step 3: Combine Features
-Combines the selected features into a single column to create a comprehensive feature set.
-def combine_features(row):
-    return row['keywords'] + " " + row['cast'] + " " + row["genres"] + " " + row["director"]
+-----
 
-df["combined_features"] = df.apply(combine_features, axis=1)
+### How It Works
 
-Step 4: Generate Count Matrix
-Creates a count matrix from the combined features.
-from sklearn.feature_extraction.text import CountVectorizer
-cv = CountVectorizer()
-count_matrix = cv.fit_transform(df["combined_features"])
+The recommendation logic follows these steps:
 
-Step 5: Compute Cosine Similarity
-Calculates the cosine similarity matrix for all movies.
-from sklearn.metrics.pairwise import cosine_similarity
-cosine_sim = cosine_similarity(count_matrix)
+1.  **Load Data**: The `movie_dataset.csv` is loaded into a pandas DataFrame.
+2.  **Clean and Combine Features**:
+      - Key features (`keywords`, `cast`, `genres`, `director`) are selected, and any missing values are filled with empty strings.
+      - These features are combined into a single string called `"combined_features"`.
+3.  **Vectorize Text**:
+      - `TfidfVectorizer` is applied to the `"combined_features"`. This converts the text into a matrix of TF-IDF features, which helps in identifying the most significant words for each movie.
+4.  **Compute Similarity**:
+      - The `cosine_similarity` function is used on the TF-IDF matrix to create a similarity score for every pair of movies.
+5.  **Get Recommendations**:
+      - The user is prompted to enter a movie title they like.
+      - The system finds the movie in the dataset and retrieves its similarity scores against all other movies.
+      - It then sorts these scores in descending order and displays the **top 10** most similar movies as recommendations.
 
-Step 6: Find Similar Movies
-Identifies movies similar to the user’s selected movie (e.g., "Avatar").
-movie_user_likes = "Avatar"
-movie_index = df[df.title == movie_user_likes].index.values[0]
-similar_movies = list(enumerate(cosine_sim[movie_index]))
+-----
 
-Step 7: Sort and Display Results
-Sorts the similar movies in descending order of similarity and displays the top 50 recommendations.
-sorted_similar_movies = sorted(similar_movies, key=lambda x: x[1], reverse=True)
+### How to Run This Project
 
-for i, element in enumerate(sorted_similar_movies[:50]):
-    print(df.iloc[element[0]].title)
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/Sana2103/Movie-Recommendation-Engine.git
+    ```
+2.  **Navigate to the project directory:**
+    ```bash
+    cd Movie-Recommendation-Engine
+    ```
+3.  **Install the required Python packages:**
+    ```bash
+    pip install pandas scikit-learn
+    ```
+4.  **Run the script:**
+      - Make sure the `movie_dataset.csv` file is in the same directory.
+      - Run the movie recommender script from your terminal:
+        ```bash
+        python movie_recommender.py
+        ```
+      - When prompted, enter a movie title and press Enter to get your recommendations.
 
-# How to Run the Project
-1.	Clone the repository.
-2.	Install the required Python packages:
-pip install pandas numpy scikit-learn
+-----
 
-3.	Place the movie_dataset.csv file in the project directory.
-4.	Run the movie_recommender_completed.py script.
-Future Improvements
-●	Integrate with a user interface for better usability.
-●	Add support for more advanced algorithms like collaborative filtering.
-●	Implement real-time recommendations using a backend server.
-# Conclusion
-This project provides a straightforward approach to building a content-based recommendation engine using Python. It serves as a foundational project for learning recommendation systems and can be expanded for real-world applications.
-Feel free to contribute or suggest improvements!
-License
-This project is open-source and available under the MIT License.
+### License
+
+This project is open-source and available under the **MIT License**.
 
